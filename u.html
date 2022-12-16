@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {},
+                },
+            };
+        </script>
+    </head>
+    <body>
+        <div>
+            <div
+                class="bg-indigo-500 w-full h-screen flex items-center flex-col"
+            >
+                <h1 class="text-3xl font-bold text-center pt-20 mb-10">RSA</h1>
+                <div class="w-1/2 bg-white/40 h-96 flex">
+                    <form action="" class="w-1/2">
+                        <div class="mb-1 mt-2">
+                            <span
+                                class="px-2 py-2 inline-block w-12inline-block w-16"
+                                >p =
+                            </span>
+                            <input type="text" id="p" class="w-[50px]" />
+                        </div>
+                        <div>
+                            <span
+                                class="px-2 py-2 inline-block w-12inline-block w-16"
+                                >q =</span
+                            >
+                            <input type="text" id="q" class="w-[50px] mb-1" />
+                        </div>
+                        <div>
+                            <span
+                                class="px-2 py-2 inline-block w-12inline-block w-16"
+                                >e =</span
+                            >
+                            <input type="text" id="e" class="w-[50px] mb-1" />
+                        </div>
+                        <div>
+                            <span
+                                class="px-2 py-2 inline-block w-12inline-block w-16"
+                                >n =</span
+                            >
+                            <input
+                                type="text"
+                                id="n"
+                                class="w-[50px] mb-1"
+                                disabled
+                            />
+                        </div>
+                        <div>
+                            <span
+                                class="px-2 py-2 inline-block w-12inline-block w-16"
+                                >ϕ(n) =</span
+                            >
+                            <input
+                                type="text"
+                                id="phi_n"
+                                class="w-3/4"
+                                disabled
+                            />
+                        </div>
+                        <div>
+                            <span
+                                class="px-2 py-2 inline-block w-12inline-block w-16"
+                                >d=</span
+                            >
+                            <input type="text" id="d" class="w-1/2" disabled />
+                        </div>
+                        <div>
+                            <span
+                                class="px-2 py-2 inline-block w-12inline-block w-16"
+                                >KU =</span
+                            >
+                            <input type="text" id="ku" class="w-1/2" disabled />
+                        </div>
+                        <div>
+                            <span
+                                class="px-2 py-2 inline-block w-12inline-block w-16"
+                                >KR =</span
+                            >
+                            <input type="text" id="kr" class="w-1/2" disabled />
+                        </div>
+                        <div class="flex">
+                            <div
+                                class="px-3 py-2 bg-green-500 mt-2 w-[75px] rounded-lg text-white text-center mx-auto hover:cursor-pointer"
+                                id="encrypt"
+                            >
+                                Tính
+                            </div>
+                            <div
+                                onclick="reset()"
+                                class="px-2 py-2 bg-green-500 mt-2 w-[75px] rounded-lg text-white text-center mx-auto hover:cursor-pointer"
+                            >
+                                Xoá
+                            </div>
+                        </div>
+                    </form>
+                    <div>
+                        <div>
+                            <span
+                                class="px-2 py-2 inline-block w-12inline-block w-16"
+                                >M =</span
+                            >
+                            <input type="text" id="M" class="w-1/2" />
+                        </div>
+                        <div>
+                            <span
+                                class="px-2 py-2 inline-block w-12inline-block w-16"
+                                >C =</span
+                            >
+                            <input type="text" id="C" class="w-full" disabled />
+                        </div>
+                        <div>
+                            <span
+                                class="px-2 py-2 inline-block w-12inline-block w-16"
+                                >M =</span
+                            >
+                            <input
+                                type="text"
+                                id="M1"
+                                class="w-full"
+                                disabled
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            let p = document.getElementById("p");
+            let q = document.getElementById("q");
+            let e = document.getElementById("e");
+            let phi_n = document.getElementById("phi_n");
+            let d = document.getElementById("d");
+            let ku = document.getElementById("ku");
+            let kr = document.getElementById("kr");
+            let M = document.getElementById("M");
+            let C = document.getElementById("C");
+            let M1 = document.getElementById("M1");
+            let btn = document.getElementById("encrypt");
+            btn.addEventListener("click", () => {
+                let p_value = p.value;
+                let q_value = q.value;
+                let e_value = e.value;
+                let n_value = parseInt(p_value) * parseInt(q_value);
+                let phi_n_value =
+                    (parseInt(p_value) - 1) * (parseInt(q_value) - 1);
+                let d_value = d.value;
+                let ku_value = ku.value;
+                let kr_value = kr.value;
+                let M_value = M.value;
+                let C_value = C.value;
+                let M1_value = M1.value;
+                document.getElementById("n").value = n_value;
+                document.getElementById("phi_n").value = `(p-1)(q-1) = (${
+                    p_value - 1
+                }) * (${q_value - 1}) =  ${phi_n_value}`;
+                d_value = findD(parseInt(e_value), parseInt(phi_n_value));
+                document.getElementById("d").value = d_value;
+                ku.value = `{e,n} = {${e_value},${n_value}}`;
+                kr.value = `{d,n} = {${d_value},${n_value}}`;
+                C_value =
+                    BigInt(parseInt(M_value)) ** BigInt(parseInt(e_value)) %
+                    BigInt(n_value);
+                C.value = `C= M^e mod n = ${C_value}`;
+                M1_value =
+                    BigInt(parseInt(C_value)) ** BigInt(parseInt(d_value)) %
+                    BigInt(n_value);
+                M1.value = `M= C^d mod n = ${M1_value}`;
+            });
+        });
+        function findD(e, phi_n) {
+            let i = 0;
+            while (true) {
+                if ((i * e) % phi_n == 1) {
+                    break;
+                } else {
+                    ++i;
+                    if (i > 100000) {
+                        alert("Không tìm thấy d");
+                        i = -1;
+                        break;
+                    }
+                }
+            }
+            return i;
+        }
+        function reset() {
+            document.getElementById("p").value = "";
+            document.getElementById("q").value = "";
+            document.getElementById("n").value = "";
+            document.getElementById("e").value = "";
+            document.getElementById("phi_n").value = "";
+            document.getElementById("d").value = "";
+            document.getElementById("ku").value = "";
+            document.getElementById("kr").value = "";
+            document.getElementById("M").value = "";
+            document.getElementById("C").value = "";
+            document.getElementById("M1").value = "";
+        }
+    </script>
+</html>
